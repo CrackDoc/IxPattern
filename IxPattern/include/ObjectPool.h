@@ -16,6 +16,8 @@
 #include <list>
 #include <algorithm>
 #include "ThreadMutex.h"
+#include "Guard.h"
+
 /**
 * @class CObjectPool
 * @brief ¶ÔÏó³ØÄ£°å

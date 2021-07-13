@@ -81,10 +81,13 @@ CClassRep* CClassRepManager::Get( const char* szClassName,bool bCaseSensitive /*
 	m_classRepListLock.Acquire();
 	if(!bCaseSensitive)
 	{
-		ClassRepListItr it0 = m_lstClassRepList.begin();
+		std::list<CClassRep*>& lstClassRepList = *static_cast<std::list<CClassRep*>*>(m_lstClassRepList);
+
+		std::list<CClassRep*>::iterator it0 = lstClassRepList.begin();
+
 		std::string strClassUpperName = szClassName;
 		std::transform(strClassUpperName.begin(), strClassUpperName.end(), strClassUpperName.begin(), ::toupper);
-		for(;it0 != m_lstClassRepList.end();++it0)
+		for(;it0 != lstClassRepList.end();++it0)
 		{
 			CClassRep *pCClassRep = *it0;
 			std::string realName = pCClassRep->GetRealClassName();
@@ -98,9 +101,12 @@ CClassRep* CClassRepManager::Get( const char* szClassName,bool bCaseSensitive /*
 	}
 	else
 	{
-		ClassRepListItr it0 = m_lstClassRepList.begin();
+		std::list<CClassRep*>& lstClassRepList = *static_cast<std::list<CClassRep*>*>(m_lstClassRepList);
+
+		std::list<CClassRep*>::iterator it0 = lstClassRepList.begin();
+
 		std::string strClassUpperName = szClassName;
-		for(;it0 != m_lstClassRepList.end();++it0)
+		for(;it0 != lstClassRepList.end();++it0)
 		{
 			CClassRep *pCClassRep = *it0;
 			std::string realName = pCClassRep->GetRealClassName();
@@ -118,15 +124,21 @@ CClassRep* CClassRepManager::Get( const char* szClassName,bool bCaseSensitive /*
 bool CClassRepManager::Add( CClassRep* pClassRep )
 {
 	m_classRepListLock.Acquire();
-	m_lstClassRepList.push_back(pClassRep);
+
+	std::list<CClassRep*>& lstClassRepList = *static_cast<std::list<CClassRep*>*>(m_lstClassRepList);
+	lstClassRepList.push_back(pClassRep);
 	m_classRepListLock.Release();
 	return true; 
 }
 bool CClassRepManager::Remove( CClassRep* pClassRep )
 {
 	m_classRepListLock.Acquire();
-	ClassRepListItr it0 = std::find(m_lstClassRepList.begin(),m_lstClassRepList.end(),pClassRep);
-	if(it0 == m_lstClassRepList.end())
+	std::list<CClassRep*>& lstClassRepList = *static_cast<std::list<CClassRep*>*>(m_lstClassRepList);
+
+	std::list<CClassRep*>::iterator it0 = std::find(lstClassRepList.begin(), lstClassRepList.end(), pClassRep);
+
+
+	if(it0 == lstClassRepList.end())
 	{
 		m_classRepListLock.Release();
 		return false;
@@ -134,7 +146,7 @@ bool CClassRepManager::Remove( CClassRep* pClassRep )
 	CClassRep *rpClassRep = *it0;
 	delete rpClassRep;
 	rpClassRep = NULL;
-	m_lstClassRepList.remove(*it0);
+	lstClassRepList.remove(*it0);
 	m_classRepListLock.Release();
 	return true; 
 }
@@ -143,12 +155,14 @@ int CClassRepManager::GetSize()
 {
 	int nSize = 0;
 	m_classRepListLock.Acquire();
-	nSize = m_lstClassRepList.size();
+	std::list<CClassRep*>& lstClassRepList = *static_cast<std::list<CClassRep*>*>(m_lstClassRepList);
+	nSize = lstClassRepList.size();
 	m_classRepListLock.Release();
 	return nSize;
 }
 
 CClassRepManager::CClassRepManager()
+	:m_lstClassRepList(new std::list<CClassRep*>())
 {
 
 }

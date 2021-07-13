@@ -143,9 +143,10 @@ private:
 	~CClassRepManager();
 
 private:
-	typedef std::list<CClassRep*> ClassRepList;
-	typedef ClassRepList::iterator ClassRepListItr;
-	ClassRepList m_lstClassRepList;
+	//typedef std::list<CClassRep*> ClassRepList;
+	//typedef ClassRepList::iterator ClassRepListItr;
+	//ClassRepList m_lstClassRepList;
+	void* m_lstClassRepList;
 	CThreadMutex m_classRepListLock;
 };
 
